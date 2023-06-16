@@ -1,110 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Text-to-Chart Generator</title>
+  <title>Text to Chart Converter</title>
   <style>
     body {
-      background-color: #f4f7fa;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
     }
 
-    h1 {
-      color: #3498db;
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    .chart-container {
-      max-width: 600px;
+    .container {
+      max-width: 800px;
       margin: 0 auto;
       padding: 20px;
       background-color: #fff;
-      border-radius: 10px;
+      border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-top: 30px;
     }
 
-    .chart {
-      width: 100%;
-      height: 300px;
-      border: 1px solid #ccc;
-      position: relative;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-
-    .bar {
-      display: inline-block;
-      width: 20px;
-      margin-right: 5px;
-      background-color: #3498db;
-      transition: height 0.3s ease-in-out;
-    }
-
-    .line {
-      fill: none;
-      stroke: #e74c3c;
-      stroke-width: 2px;
-    }
-
-    .pie-slice {
-      stroke: #fff;
-    }
-
-    .chart-label {
-      text-align: center;
-      margin-top: 5px;
-      font-size: 12px;
-      color: #333;
-    }
-
-    .input-container {
-      margin-top: 20px;
-    }
-
-    .input-container textarea {
-      width: 100%;
-      height: 100px;
-      resize: none;
-      font-size: 14px;
-      padding: 5px;
-    }
-
-    .input-container label {
-      font-size: 14px;
+    h1 {
+      font-size: 24px;
       font-weight: bold;
-      color: #3498db;
+      margin: 0;
+      margin-bottom: 20px;
+      color: #003366;
     }
 
-    .input-container button {
-      margin-top: 10px;
-      background-color: #3498db;
+    p {
+      margin: 0;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
       color: #fff;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
+      border-radius: 4px;
+      font-size: 14px;
       cursor: pointer;
-      transition: background-color 0.3s ease-in-out;
     }
 
-    .input-container button:hover {
-      background-color: #2980b9;
+    .chart-container {
+      width: 100%;
+      height: 400px;
+      margin-bottom: 20px;
     }
 
-    .credit {
+    .update-notice {
       text-align: center;
+      font-size: 14px;
+      color: #003366;
+      border: 1px solid #007bff;
+      background-color: #def3ff;
+      padding: 10px;
       margin-top: 20px;
-      color: #777;
-      font-size: 12px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .credit span {
-      color: #3498db;
-    }
-
-    /* Modal Styles */
-    .modal {
+    .tutorial-modal {
       display: none;
       position: fixed;
       z-index: 1;
@@ -113,228 +91,264 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba(0, 0, 0, 0.5);
     }
 
     .modal-content {
-      background-color: #fefefe;
-      margin: 10% auto;
+      background-color: #fff;
+      margin: 15% auto;
       padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 600px;
       border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      width: 60%;
     }
 
-    .modal-header h2 {
-      margin-top: 0;
-    }
-
-    .modal-close {
-      color: #aaa;
+    .close-button {
       float: right;
-      font-size: 28px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .modal-close:hover,
-    .modal-close:focus {
-      color: #000;
-      text-decoration: none;
-      cursor: pointer;
+    .close-button:hover {
+      color: #f44336;
     }
   </style>
 </head>
 <body>
-  <h1>Text-to-Chart Generator</h1>
-
-  <div class="chart-container">
-    <div class="input-container">
-      <label for="textInput">Enter text:</label>
-      <textarea id="textInput" placeholder="Enter values separated by commas (e.g., 5,3,8)"></textarea>
-      <br>
-      <label for="includeNames">Include names:</label>
-      <input type="checkbox" id="includeNames">
-      <br>
-      <button onclick="convertToChart('bar')">Generate Bar Chart</button>
-      <button onclick="convertToChart('line')">Generate Line Chart</button>
-      <button onclick="convertToChart('pie')">Generate Pie Chart</button>
-      <button onclick="displayTutorial()">Tutorial</button>
-    </div>
-
-    <div id="chartContainer" class="chart"></div>
+  <div class="container">
+    <h1>Text to Chart Converter</h1>
+    <p>Enter a list of numbers separated by commas and convert it into a bar, line, or pie chart.</p>
+    <label for="textInput">Text Input:</label>
+    <input type="text" id="textInput" placeholder="Enter numbers separated by commas">
+    <label for="chartType">Chart Type:</label>
+    <select id="chartType">
+      <option value="bar">Bar Chart</option>
+      <option value="line">Line Chart</option>
+      <option value="pie">Pie Chart</option>
+    </select>
+    <label for="includeNames">Include Names:</label>
+    <input type="checkbox" id="includeNames">
+    <label for="includeNumbers">Include Numbers:</label>
+    <input type="checkbox" id="includeNumbers">
+    <button onclick="generateChart()">Generate Chart</button>
+    <div class="chart-container" id="chartContainer"></div>
+    <div class="update-notice"></div>
+    <button onclick="openTutorial()">Tutorial</button>
+    <button onclick="displayAboutTTC()">About TTC</button>
+    <button onclick="displayAboutWordOfLio()">About Word Of Lio</button>
   </div>
 
-  <div class="credit">Created by <span>Word Of Lio</span>, Little Inventive One</div>
-
-  <!-- Modal -->
-  <div id="tutorialModal" class="modal">
+  <div class="tutorial-modal" id="tutorialModal">
     <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-close" onclick="closeTutorial()">&times;</span>
-        <h2>How to Use Text-to-Chart</h2>
-      </div>
-      <div class="modal-body">
-        <p>To create a chart:</p>
-        <ol>
-          <li>Enter the values separated by commas in the text area.</li>
-          <li>Check the "Include names" checkbox if you want to provide labels for each value.</li>
-          <li>Select the desired chart type (Bar Chart, Line Chart, or Pie Chart).</li>
-          <li>Click the "Generate" button to generate the chart.</li>
-        </ol>
-      </div>
+      <span class="close-button" onclick="closeTutorial()">&times;</span>
+      <h2>Tutorial</h2>
+      <p>To use the Text to Chart Converter:</p>
+      <ol>
+        <li>Enter a list of numbers separated by commas into the text input field.</li>
+        <li>Select the chart type from the dropdown.</li>
+        <li>Choose whether to include names and/or numbers.</li>
+        <li>Click the "Generate Chart" button to generate the chart.</li>
+        <li>The chart will be displayed in the chart container below.</li>
+        <li>Use the zoom controls to zoom in and out of the chart.</li>
+      </ol>
     </div>
   </div>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
-    function convertToChart(chartType) {
-      var textInput = document.getElementById("textInput").value;
-      var includeNames = document.getElementById("includeNames").checked;
-      var values = textInput.split(",");
-
+    function generateChart() {
       clearChart();
 
+      var inputData = document.getElementById("textInput").value;
+      var data = inputData.split(",").map(function (d) { return parseFloat(d.trim()); });
+      var chartType = document.getElementById("chartType").value;
+      var includeNames = document.getElementById("includeNames").checked;
+      var includeNumbers = document.getElementById("includeNumbers").checked;
+      var total = data.reduce(function (a, b) { return a + b; }, 0);
+
       if (chartType === "bar") {
-        values.forEach(function (value) {
-          value = value.trim();
-          var bar = document.createElement("div");
-          var barLabel = document.createElement("div");
+        var chartContainer = d3.select("#chartContainer")
+          .append("svg")
+          .attr("width", "100%")
+          .attr("height", "100%");
 
-          bar.className = "bar";
-          bar.style.height = "0";
+        var xScale = d3.scaleBand()
+          .domain(data.map(function (_, i) { return i; }))
+          .range([0, document.getElementById("chartContainer").offsetWidth])
+          .padding(0.1);
 
-          if (includeNames) {
-            var parts = value.split(":");
-            var label = parts[0].trim();
-            var barValue = parseInt(parts[1]);
+        var yScale = d3.scaleLinear()
+          .domain([0, d3.max(data)])
+          .range([document.getElementById("chartContainer").offsetHeight, 0]);
 
-            if (!isNaN(barValue) && barValue > 0) {
-              barLabel.className = "chart-label";
-              barLabel.textContent = label;
-              bar.appendChild(barLabel);
-              document.getElementById("chartContainer").appendChild(bar);
+        var barChart = chartContainer.selectAll("rect")
+          .data(data)
+          .enter()
+          .append("rect")
+          .attr("x", function (d, i) { return xScale(i); })
+          .attr("y", function (d) { return yScale(d); })
+          .attr("width", xScale.bandwidth())
+          .attr("height", function (d) { return document.getElementById("chartContainer").offsetHeight - yScale(d); })
+          .style("fill", "#2196f3")
+          .style("opacity", 0)
+          .transition()
+          .duration(1000)
+          .style("opacity", 1);
 
-              setTimeout(function () {
-                bar.style.height = barValue * 10 + "px";
-              }, 100);
-            }
-          } else {
-            var barValue = parseInt(value);
+        if (includeNames) {
+          var nameLabels = chartContainer.selectAll("text")
+            .data(data)
+            .enter()
+            .append("text")
+            .text(function (d, i) { return "Value " + (i + 1) + ": " + d; })
+            .attr("x", function (d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+            .attr("y", function (d) { return yScale(d) - 10; })
+            .style("text-anchor", "middle")
+            .style("opacity", 0)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1);
+        }
 
-            if (!isNaN(barValue) && barValue > 0) {
-              document.getElementById("chartContainer").appendChild(bar);
-
-              setTimeout(function () {
-                bar.style.height = barValue * 10 + "px";
-              }, 100);
-            }
-          }
-        });
+        if (includeNumbers) {
+          var valueLabels = chartContainer.selectAll("text.value")
+            .data(data)
+            .enter()
+            .append("text")
+            .text(function (d) { return d; })
+            .attr("x", function (d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+            .attr("y", function (d) { return yScale(d) + 20; })
+            .style("text-anchor", "middle")
+            .style("opacity", 0)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1);
+        }
       } else if (chartType === "line") {
-        var data = [];
-        values.forEach(function (value, index) {
-          value = parseInt(value.trim());
-          if (!isNaN(value)) {
-            data.push({ x: index + 1, y: value });
-          }
-        });
-
-        var svg = d3.select("#chartContainer")
+        var chartContainer = d3.select("#chartContainer")
           .append("svg")
           .attr("width", "100%")
           .attr("height", "100%");
 
         var xScale = d3.scaleLinear()
-          .domain([1, data.length])
+          .domain([0, data.length - 1])
           .range([0, document.getElementById("chartContainer").offsetWidth]);
 
         var yScale = d3.scaleLinear()
-          .domain([0, d3.max(data, function (d) { return d.y; })])
+          .domain([0, d3.max(data)])
           .range([document.getElementById("chartContainer").offsetHeight, 0]);
 
         var line = d3.line()
-          .x(function (d) { return xScale(d.x); })
-          .y(function (d) { return yScale(d.y); });
+          .x(function (d, i) { return xScale(i); })
+          .y(function (d) { return yScale(d); });
 
-        svg.append("path")
+        var lineChart = chartContainer.append("path")
           .datum(data)
-          .attr("class", "line")
           .attr("d", line)
-          .style("opacity", 0)
+          .attr("fill", "none")
+          .attr("stroke", "#2196f3")
+          .attr("stroke-width", 2)
+          .attr("opacity", 0)
           .transition()
           .duration(1000)
-          .style("opacity", 1);
-      } else if (chartType === "pie") {
-        var total = 0;
-        values.forEach(function (value) {
-          value = parseInt(value.trim());
-          if (!isNaN(value) && value > 0) {
-            total += value;
-          }
-        });
+          .attr("opacity", 1);
 
-        var svg = d3.select("#chartContainer")
+        if (includeNames) {
+          var nameLabels = chartContainer.selectAll("text")
+            .data(data)
+            .enter()
+            .append("text")
+            .text(function (d, i) { return "Value " + (i + 1) + ": " + d; })
+            .attr("x", function (d, i) { return xScale(i); })
+            .attr("y", function (d) { return yScale(d) - 10; })
+            .style("text-anchor", "middle")
+            .style("opacity", 0)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1);
+        }
+
+        if (includeNumbers) {
+          var valueLabels = chartContainer.selectAll("text.value")
+            .data(data)
+            .enter()
+            .append("text")
+            .text(function (d) { return d; })
+            .attr("x", function (d, i) { return xScale(i); })
+            .attr("y", function (d) { return yScale(d) + 20; })
+            .style("text-anchor", "middle")
+            .style("opacity", 0)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1);
+        }
+      } else if (chartType === "pie") {
+        var chartContainer = d3.select("#chartContainer")
           .append("svg")
           .attr("width", "100%")
-          .attr("height", "100%");
+          .attr("height", "100%")
+          .attr("viewBox", "0 0 " + Math.min(document.getElementById("chartContainer").offsetWidth, document.getElementById("chartContainer").offsetHeight) + " " + Math.min(document.getElementById("chartContainer").offsetWidth, document.getElementById("chartContainer").offsetHeight))
+          .attr("preserveAspectRatio", "xMinYMin");
 
-        var radius = Math.min(document.getElementById("chartContainer").offsetWidth, document.getElementById("chartContainer").offsetHeight) / 2;
+        var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+        var pie = d3.pie()
+          .value(function (d) { return d; });
 
         var arc = d3.arc()
           .innerRadius(0)
-          .outerRadius(radius - 10);
+          .outerRadius(Math.min(document.getElementById("chartContainer").offsetWidth, document.getElementById("chartContainer").offsetHeight) / 2);
 
-        var pie = d3.pie()
-          .sort(null)
-          .value(function (d) { return d; });
-
-        var pieData = pie(values);
-
-        var arcs = svg.selectAll(".pie-slice")
-          .data(pieData)
+        var pieChart = chartContainer.append("g")
+          .attr("transform", "translate(" + Math.min(document.getElementById("chartContainer").offsetWidth, document.getElementById("chartContainer").offsetHeight) / 2 + "," + Math.min(document.getElementById("chartContainer").offsetWidth, document.getElementById("chartContainer").offsetHeight) / 2 + ")")
+          .selectAll("path")
+          .data(pie(data))
           .enter()
-          .append("g")
-          .attr("class", "pie-slice")
-          .attr("transform", "translate(" + document.getElementById("chartContainer").offsetWidth / 2 + "," + document.getElementById("chartContainer").offsetHeight / 2 + ")");
-
-        arcs.append("path")
+          .append("path")
           .attr("d", arc)
-          .style("fill", function (d, i) {
-            var colors = ["#add8e6", "#3498db", "#003366"];
-            return colors[i % colors.length];
-          })
-          .style("opacity", 0)
+          .attr("fill", function (d, i) { return colorScale(i); })
+          .attr("opacity", 0)
           .transition()
           .duration(1000)
-          .style("opacity", 1);
+          .attr("opacity", 1);
 
-        arcs.append("text")
-          .attr("transform", function (d) { return "translate(" + arc.centroid(d) + ")"; })
-          .attr("dy", "0.35em")
-          .text(function (d) { return Math.round((d.data / total) * 100) + "%"; })
-          .style("opacity", 0)
-          .transition()
-          .duration(1000)
-          .style("opacity", 1);
+        if (includeNames) {
+          var nameLabels = chartContainer.selectAll("text")
+            .data(pie(data))
+            .enter()
+            .append("text")
+            .text(function (d, i) { return "Value " + (i + 1) + ": " + d.data; })
+            .attr("transform", function (d) { return "translate(" + arc.centroid(d) + ")"; })
+            .style("text-anchor", "middle")
+            .style("opacity", 0)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1);
+        }
       }
+
+      document.getElementById("textInput").value = "";
     }
 
     function clearChart() {
-      document.getElementById("chartContainer").innerHTML = "";
+      d3.select("#chartContainer").html("");
     }
 
-    function displayTutorial() {
-      var modal = document.getElementById("tutorialModal");
-      modal.style.display = "block";
+    function openTutorial() {
+      document.getElementById("tutorialModal").style.display = "block";
     }
 
     function closeTutorial() {
-      var modal = document.getElementById("tutorialModal");
-      modal.style.display = "none";
+      document.getElementById("tutorialModal").style.display = "none";
+    }
+
+    function displayAboutTTC() {
+      alert("Text to Chart Converter (TTC) is a web application that allows you to convert a list of numbers into different types of charts. It is developed by Word Of Lio.");
+    }
+
+    function displayAboutWordOfLio() {
+      alert("Word Of Lio is a group of individuals passionate about creating a cool future, learning coding, and writing short stories and journals. LIO stands for Little Inventive One, the creator of Word Of Lio and the TTC website.");
     }
   </script>
 </body>
-  </html>
+</html>
