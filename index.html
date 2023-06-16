@@ -1,109 +1,76 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Text-to-Chart Generator</title>
+  <title>Text to Chart Converter</title>
   <style>
     body {
-      background-color: #f4f7fa;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
-    h1 {
-      color: #3498db;
-      text-align: center;
-      margin-top: 30px;
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chart-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-form label {
+      margin-bottom: 10px;
+    }
+
+    .chart-form select,
+    .chart-form input[type="color"] {
+      margin-bottom: 10px;
     }
 
     .chart-container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-top: 30px;
-    }
-
-    .chart {
-      width: 100%;
-      height: 300px;
+      width: 600px;
+      height: 400px;
+      margin-top: 20px;
       border: 1px solid #ccc;
-      position: relative;
+      border-radius: 8px;
       overflow: hidden;
-      margin-top: 20px;
     }
 
-    .bar {
-      display: inline-block;
-      width: 20px;
-      margin-right: 5px;
-      background-color: #3498db;
-      transition: height 0.3s ease-in-out;
-    }
-
-    .line {
-      fill: none;
-      stroke: #e74c3c;
-      stroke-width: 2px;
-    }
-
-    .pie-slice {
-      stroke: #fff;
-    }
-
-    .chart-label {
-      text-align: center;
-      margin-top: 5px;
-      font-size: 12px;
-      color: #333;
-    }
-
-    .input-container {
-      margin-top: 20px;
-    }
-
-    .input-container textarea {
+    .chart-container svg {
       width: 100%;
-      height: 100px;
-      resize: none;
-      font-size: 14px;
-      padding: 5px;
+      height: 100%;
     }
 
-    .input-container label {
-      font-size: 14px;
-      font-weight: bold;
-      color: #3498db;
-    }
-
-    .input-container button {
-      margin-top: 10px;
-      background-color: #3498db;
+    .button {
+      padding: 10px 20px;
+      background-color: #003366;
       color: #fff;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
+      border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.3s ease-in-out;
     }
 
-    .input-container button:hover {
-      background-color: #2980b9;
+    .button:hover {
+      background-color: #002b4d;
     }
 
-    .credit {
-      text-align: center;
+    .zoom-buttons {
       margin-top: 20px;
-      color: #777;
-      font-size: 12px;
     }
 
-    .credit span {
-      color: #3498db;
+    .zoom-buttons button {
+      margin-right: 10px;
     }
 
-    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -118,17 +85,12 @@
 
     .modal-content {
       background-color: #fefefe;
-      margin: 10% auto;
+      margin: 20% auto;
       padding: 20px;
       border: 1px solid #888;
       width: 80%;
       max-width: 600px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-header h2 {
-      margin-top: 0;
+      border-radius: 8px;
     }
 
     .modal-close {
@@ -147,194 +109,394 @@
     }
   </style>
 </head>
+
 <body>
-  <h1>Text-to-Chart Generator</h1>
-
-  <div class="chart-container">
-    <div class="input-container">
-      <label for="textInput">Enter text:</label>
-      <textarea id="textInput" placeholder="Enter values separated by commas (e.g., 5,3,8)"></textarea>
-      <br>
-      <label for="includeNames">Include names:</label>
-      <input type="checkbox" id="includeNames">
-      <br>
-      <button onclick="convertToChart('bar')">Generate Bar Chart</button>
-      <button onclick="convertToChart('line')">Generate Line Chart</button>
-      <button onclick="convertToChart('pie')">Generate Pie Chart</button>
-      <button onclick="displayTutorial()">Tutorial</button>
+  <div class="container">
+    <div class="chart-form">
+      <h2>Text to Chart Converter</h2>
+      <label for="chartTypeSelect">Select Chart Type:</label>
+      <select id="chartTypeSelect">
+        <option value="bar">Bar Chart</option>
+        <option value="line">Line Chart</option>
+        <option value="pie">Pie Chart</option>
+      </select>
+      <label for="includeNamesSelect">Include Names:</label>
+      <select id="includeNamesSelect">
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+      <label for="includeNumberSelect">Include Numbers:</label>
+      <select id="includeNumberSelect">
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+      <label for="chartColorInput">Chart Color:</label>
+      <input type="color" id="chartColorInput" value="#003366">
+      <button class="button" onclick="generateChart()">Generate Chart</button>
+      <div class="zoom-buttons">
+        <button class="button" onclick="zoomIn()">Zoom In</button>
+        <button class="button" onclick="zoomOut()">Zoom Out</button>
+      </div>
     </div>
-
-    <div id="chartContainer" class="chart"></div>
+    <div class="chart-container" id="chartContainer"></div>
   </div>
 
-  <div class="credit">Created by <span>Word Of Lio</span>, Little Inventive One</div>
-
-  <!-- Modal -->
-  <div id="tutorialModal" class="modal">
+  <!-- About TTC Modal -->
+  <div id="modalAboutTTC" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-close" onclick="closeTutorial()">&times;</span>
-        <h2>How to Use Text-to-Chart</h2>
-      </div>
-      <div class="modal-body">
-        <p>To create a chart:</p>
-        <ol>
-          <li>Enter the values separated by commas in the text area.</li>
-          <li>Check the "Include names" checkbox if you want to provide labels for each value.</li>
-          <li>Select the desired chart type (Bar Chart, Line Chart, or Pie Chart).</li>
-          <li>Click the "Generate" button to generate the chart.</li>
-        </ol>
-      </div>
+      <span class="modal-close" onclick="closeModal('modalAboutTTC')">&times;</span>
+      <h3>About TTC</h3>
+      <p>
+        Text to Chart Converter (TTC) is a tool that allows you to convert text data into interactive and visually
+        appealing charts. It supports bar charts, line charts, and pie charts, and provides options to include names and
+        numbers in the charts.
+      </p>
+      <p>
+        TTC is developed by Word of Lio, a group dedicated to creating cool projects and exploring the world of coding,
+        writing short stories, and journals.
+      </p>
     </div>
   </div>
 
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <!-- About Word of Lio Modal -->
+  <div id="modalAboutWordOfLio" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('modalAboutWordOfLio')">&times;</span>
+      <h3>About Word of Lio</h3>
+      <p>
+        Word of Lio is a group focused on creating a cool future through innovative projects and learning in the fields of
+        coding, writing, and creativity. Lio, short for Little Inventive One, is the creative mind behind the group and the
+        TTC website.
+      </p>
+    </div>
+  </div>
+
+  <script src="https://d3js.org/d3.v5.min.js"></script>
   <script>
-    function convertToChart(chartType) {
-      var textInput = document.getElementById("textInput").value;
-      var includeNames = document.getElementById("includeNames").checked;
-      var values = textInput.split(",");
+    function generateChart() {
+      var chartType = document.getElementById("chartTypeSelect").value;
+      var includeNames = document.getElementById("includeNamesSelect").value === "true";
+      var includeNumber = document.getElementById("includeNumberSelect").value === "true";
+      var chartColor = document.getElementById("chartColorInput").value;
 
-      clearChart();
+      var dataText = document.getElementById("dataInput").value;
+      var dataArray = dataText.split("\n");
 
-      if (chartType === "bar") {
-        values.forEach(function (value) {
-          value = value.trim();
-          var bar = document.createElement("div");
-          var barLabel = document.createElement("div");
-
-          bar.className = "bar";
-          bar.style.height = "0";
-
-          if (includeNames) {
-            var parts = value.split(":");
-            var label = parts[0].trim();
-            var barValue = parseInt(parts[1]);
-
-            if (!isNaN(barValue) && barValue > 0) {
-              barLabel.className = "chart-label";
-              barLabel.textContent = label;
-              bar.appendChild(barLabel);
-              document.getElementById("chartContainer").appendChild(bar);
-
-              setTimeout(function () {
-                bar.style.height = barValue * 10 + "px";
-              }, 100);
-            }
-          } else {
-            var barValue = parseInt(value);
-
-            if (!isNaN(barValue) && barValue > 0) {
-              document.getElementById("chartContainer").appendChild(bar);
-
-              setTimeout(function () {
-                bar.style.height = barValue * 10 + "px";
-              }, 100);
-            }
-          }
-        });
-      } else if (chartType === "line") {
-        var data = [];
-        values.forEach(function (value, index) {
-          value = parseInt(value.trim());
-          if (!isNaN(value)) {
-            data.push({ x: index + 1, y: value });
-          }
-        });
-
-        var svg = d3.select("#chartContainer")
-          .append("svg")
-          .attr("width", "100%")
-          .attr("height", "100%");
-
-        var xScale = d3.scaleLinear()
-          .domain([1, data.length])
-          .range([0, document.getElementById("chartContainer").offsetWidth]);
-
-        var yScale = d3.scaleLinear()
-          .domain([0, d3.max(data, function (d) { return d.y; })])
-          .range([document.getElementById("chartContainer").offsetHeight, 0]);
-
-        var line = d3.line()
-          .x(function (d) { return xScale(d.x); })
-          .y(function (d) { return yScale(d.y); });
-
-        svg.append("path")
-          .datum(data)
-          .attr("class", "line")
-          .attr("d", line)
-          .style("opacity", 0)
-          .transition()
-          .duration(1000)
-          .style("opacity", 1);
-      } else if (chartType === "pie") {
-        var total = 0;
-        values.forEach(function (value) {
-          value = parseInt(value.trim());
-          if (!isNaN(value) && value > 0) {
-            total += value;
-          }
-        });
-
-        var svg = d3.select("#chartContainer")
-          .append("svg")
-          .attr("width", "100%")
-          .attr("height", "100%");
-
-        var radius = Math.min(document.getElementById("chartContainer").offsetWidth, document.getElementById("chartContainer").offsetHeight) / 2;
-
-        var arc = d3.arc()
-          .innerRadius(0)
-          .outerRadius(radius - 10);
-
-        var pie = d3.pie()
-          .sort(null)
-          .value(function (d) { return d; });
-
-        var pieData = pie(values);
-
-        var arcs = svg.selectAll(".pie-slice")
-          .data(pieData)
-          .enter()
-          .append("g")
-          .attr("class", "pie-slice")
-          .attr("transform", "translate(" + document.getElementById("chartContainer").offsetWidth / 2 + "," + document.getElementById("chartContainer").offsetHeight / 2 + ")");
-
-        arcs.append("path")
-          .attr("d", arc)
-          .style("fill", function (d, i) {
-            var colors = ["#add8e6", "#3498db", "#003366"];
-            return colors[i % colors.length];
-          })
-          .style("opacity", 0)
-          .transition()
-          .duration(1000)
-          .style("opacity", 1);
-
-        arcs.append("text")
-          .attr("transform", function (d) { return "translate(" + arc.centroid(d) + ")"; })
-          .attr("dy", "0.35em")
-          .text(function (d) { return Math.round((d.data / total) * 100) + "%"; })
-          .style("opacity", 0)
-          .transition()
-          .duration(1000)
-          .style("opacity", 1);
+      switch (chartType) {
+        case "bar":
+          generateBarChart(dataArray, includeNames, includeNumber, chartColor);
+          break;
+        case "line":
+          generateLineChart(dataArray, includeNames, includeNumber, chartColor);
+          break;
+        case "pie":
+          generatePieChart(dataArray, includeNames);
+          break;
       }
     }
 
-    function clearChart() {
-      document.getElementById("chartContainer").innerHTML = "";
+    function generateBarChart(dataArray, includeNames, includeNumber, chartColor) {
+      var chartData = [];
+
+      for (var i = 0; i < dataArray.length; i++) {
+        var item = dataArray[i].split(",");
+        var value = includeNumber ? parseFloat(item[0]) : item[0];
+        var label = includeNames ? item[1] : "";
+
+        chartData.push({
+          value: value,
+          label: label
+        });
+      }
+
+      chartContainer.innerHTML = "";
+
+      var svg = d3
+        .select("#chartContainer")
+        .append("svg")
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+      var chartWidth = chartContainer.offsetWidth;
+      var chartHeight = chartContainer.offsetHeight;
+      var margin = {
+        top: 20,
+        right: 20,
+        bottom: 40,
+        left: 40
+      };
+      var width = chartWidth - margin.left - margin.right;
+      var height = chartHeight - margin.top - margin.bottom;
+
+      var chart = svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      var xScale = d3
+        .scaleBand()
+        .domain(chartData.map((d) => d.label))
+        .range([0, width])
+        .padding(0.2);
+
+      var yScale = d3
+        .scaleLinear()
+        .domain([0, d3.max(chartData, (d) => d.value)])
+        .range([height, 0]);
+
+      var bars = chart.selectAll(".bar")
+        .data(chartData)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", (d) => xScale(d.label))
+        .attr("y", (d) => yScale(d.value))
+        .attr("width", xScale.bandwidth())
+        .attr("height", (d) => height - yScale(d.value))
+        .attr("fill", chartColor);
+
+      if (includeNumber) {
+        var valueLabels = chart.selectAll(".value-label")
+          .data(chartData)
+          .enter()
+          .append("text")
+          .attr("class", "value-label")
+          .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+          .attr("y", (d) => yScale(d.value) - 5)
+          .text((d) => d.value)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#fff");
+      }
+
+      if (includeNames) {
+        var nameLabels = chart.selectAll(".name-label")
+          .data(chartData)
+          .enter()
+          .append("text")
+          .attr("class", "name-label")
+          .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+          .attr("y", height + 20)
+          .text((d) => d.label)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#fff");
+      }
+
+      chart.transition().duration(1000);
+
+      var xAxis = d3.axisBottom(xScale);
+      var yAxis = d3.axisLeft(yScale);
+
+      svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${chartHeight - margin.bottom})`)
+        .call(xAxis);
+
+      svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`)
+        .call(yAxis);
     }
 
-    function displayTutorial() {
-      var modal = document.getElementById("tutorialModal");
+    function generateLineChart(dataArray, includeNames, includeNumber, chartColor) {
+      var chartData = [];
+
+      for (var i = 0; i < dataArray.length; i++) {
+        var item = dataArray[i].split(",");
+        var value = includeNumber ? parseFloat(item[0]) : item[0];
+        var label = includeNames ? item[1] : "";
+
+        chartData.push({
+          value: value,
+          label: label
+        });
+      }
+
+      chartContainer.innerHTML = "";
+
+      var svg = d3
+        .select("#chartContainer")
+        .append("svg")
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+      var chartWidth = chartContainer.offsetWidth;
+      var chartHeight = chartContainer.offsetHeight;
+      var margin = {
+        top: 20,
+        right: 20,
+        bottom: 40,
+        left: 40
+      };
+      var width = chartWidth - margin.left - margin.right;
+      var height = chartHeight - margin.top - margin.bottom;
+
+      var chart = svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      var xScale = d3
+        .scaleBand()
+        .domain(chartData.map((d) => d.label))
+        .range([0, width])
+        .padding(0.2);
+
+      var yScale = d3
+        .scaleLinear()
+        .domain([0, d3.max(chartData, (d) => d.value)])
+        .range([height, 0]);
+
+      var line = d3
+        .line()
+        .x((d) => xScale(d.label) + xScale.bandwidth() / 2)
+        .y((d) => yScale(d.value));
+
+      var path = chart
+        .append("path")
+        .datum(chartData)
+        .attr("fill", "none")
+        .attr("stroke", chartColor)
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+      if (includeNumber) {
+        var valueLabels = chart.selectAll(".value-label")
+          .data(chartData)
+          .enter()
+          .append("text")
+          .attr("class", "value-label")
+          .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+          .attr("y", (d) => yScale(d.value) - 5)
+          .text((d) => d.value)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#fff");
+      }
+
+      if (includeNames) {
+        var nameLabels = chart.selectAll(".name-label")
+          .data(chartData)
+          .enter()
+          .append("text")
+          .attr("class", "name-label")
+          .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+          .attr("y", height + 20)
+          .text((d) => d.label)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#fff");
+      }
+
+      chart.transition().duration(1000);
+
+      var xAxis = d3.axisBottom(xScale);
+      var yAxis = d3.axisLeft(yScale);
+
+      svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${chartHeight - margin.bottom})`)
+        .call(xAxis);
+
+      svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`)
+        .call(yAxis);
+    }
+
+    function generatePieChart(dataArray, includeNames) {
+      var chartData = [];
+
+      for (var i = 0; i < dataArray.length; i++) {
+        var item = dataArray[i].split(",");
+        var value = parseFloat(item[0]);
+        var label = includeNames ? item[1] : "";
+
+        chartData.push({
+          value: value,
+          label: label
+        });
+      }
+
+      chartContainer.innerHTML = "";
+
+      var svg = d3
+        .select("#chartContainer")
+        .append("svg")
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+      var chartWidth = chartContainer.offsetWidth;
+      var chartHeight = chartContainer.offsetHeight;
+      var margin = {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      };
+      var width = chartWidth - margin.left - margin.right;
+      var height = chartHeight - margin.top - margin.bottom;
+      var radius = Math.min(width, height) / 2;
+
+      var chart = svg
+        .append("g")
+        .attr("transform", `translate(${width / 2},${height / 2})`);
+
+      var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+      var pie = d3.pie()
+        .value((d) => d.value)
+        .sort(null);
+
+      var arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius);
+
+      var arcs = chart.selectAll(".arc")
+        .data(pie(chartData))
+        .enter()
+        .append("g")
+        .attr("class", "arc");
+
+      arcs.append("path")
+        .attr("d", arc)
+        .attr("fill", (d, i) => colorScale(i));
+
+      if (includeNames) {
+        arcs.append("text")
+          .attr("transform", (d) => `translate(${arc.centroid(d)})`)
+          .attr("dy", "0.35em")
+          .text((d) => d.data.label)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#fff");
+      }
+    }
+
+    function zoomIn() {
+      var chart = document.getElementById("chartContainer").querySelector("svg");
+      var currentWidth = chart.getAttribute("width");
+      var currentHeight = chart.getAttribute("height");
+      var newWidth = parseInt(currentWidth) * 1.2;
+      var newHeight = parseInt(currentHeight) * 1.2;
+      chart.setAttribute("width", newWidth);
+      chart.setAttribute("height", newHeight);
+    }
+
+    function zoomOut() {
+      var chart = document.getElementById("chartContainer").querySelector("svg");
+      var currentWidth = chart.getAttribute("width");
+      var currentHeight = chart.getAttribute("height");
+      var newWidth = parseInt(currentWidth) / 1.2;
+      var newHeight = parseInt(currentHeight) / 1.2;
+      chart.setAttribute("width", newWidth);
+      chart.setAttribute("height", newHeight);
+    }
+
+    function openModal(modalId) {
+      var modal = document.getElementById(modalId);
       modal.style.display = "block";
     }
 
-    function closeTutorial() {
-      var modal = document.getElementById("tutorialModal");
+    function closeModal(modalId) {
+      var modal = document.getElementById(modalId);
       modal.style.display = "none";
     }
   </script>
 </body>
+
 </html>
